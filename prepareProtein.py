@@ -1,3 +1,8 @@
+"""
+This script was obtained from https://github.com/tdudgeon/simple-simulate-complex
+
+"""
+
 import sys
 from openmm.app import *
 from openmm import *
