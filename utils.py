@@ -1,3 +1,9 @@
+"""
+This script was obtained from https://github.com/tdudgeon/simple-simulate-complex
+
+
+"""
+
 import os
 from openmm import Platform
 
