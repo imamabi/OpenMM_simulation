@@ -43,19 +43,21 @@ with open('system.xml') as input:
     system = XmlSerializer.deserialize(input.read())
 
 #define integrators
-integrator = LangevinMiddleIntegrator(temperature, friction_coeff, step_size)
+#integrator = LangevinMiddleIntegrator(temperature, friction_coeff, step_size)
+integrator = VerletIntegrator(step_size)
+system.addForce(openmm.AndersenThermostat(temperature, friction_coeff))
 
 #create simulation
 simulation=Simulation(model_sys.topology, system, integrator, platform=platform)
 
-#set positions, velocities and box vectors from checkpoint
+#restore positions, velocities and box vectors from checkpoint
 simulation.loadCheckpoint('equilibration_checkpnt.chk')
 
 #Create reporters
 simulation.reporters.append(DCDReporter(output_traj_dcd, reporting_interval, enforcePeriodicBox=True))
 simulation.reporters.append(StateDataReporter(sys.stdout, reporting_interval * 5, step=True, potentialEnergy=True, temperature=True))
 simulation.reporters.append(CheckpointReporter('production_checkpnt.chk', (reporting_interval/20)))
-simulation.reporters.append(StateDataReporter("prodcution_log.csv", reporting_interval, step=True, potentialEnergy=True, temperature=True, volume=True))
+simulation.reporters.append(StateDataReporter("production_log.csv", reporting_interval, step=True, potentialEnergy=True, temperature=True, volume=True))
 
 print('Starting NVT simulation with', num_steps, 'steps ...')
 t1 = time.time()
