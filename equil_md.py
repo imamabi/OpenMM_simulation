@@ -1,10 +1,5 @@
 """
 Run a MD simulation for a complex, optionally adding a solvent box
-
-This script was obtained from https://github.com/tdudgeon/simple-simulate-complex
-
-Few adjustments were made to perform NPT equilibration and NVT production
-
 """
 
 import sys, time, argparse
@@ -107,12 +102,20 @@ with open(output_complex, 'w') as outfile:
 # Create the system using the SystemGenerator
 system = system_generator.create_system(modeller.topology, molecules=ligand_mol)
 
+# Save system info
+with open('system.xml', 'w') as output:
+    output.write(XmlSerializer.serialize(system))
+
 friction_coeff = args.friction_coeff / unit.picosecond
 step_size = args.step_size * unit.picoseconds
 duration = (step_size * equilibration_steps).value_in_unit(unit.nanoseconds)
 print('Equilibrating for {} ns'.format(duration))
 
-integrator = LangevinIntegrator(temperature, friction_coeff, step_size)
+# Select integrator
+#integrator = LangevinIntegrator(temperature, friction_coeff, step_size)
+integrator = VerletIntegrator(step_size)
+system.addForce(openmm.AndersenThermostat(temperature, friction_coeff))
+
 if args.solvate:
     system.addForce(openmm.MonteCarloBarostat(1 * unit.atmospheres, temperature, 25))
 
@@ -132,8 +135,8 @@ simulation.minimizeEnergy()
 with open(output_min, 'w') as outfile:
     PDBFile.writeFile(modeller.topology, context.getState(getPositions=True, enforcePeriodicBox=True).getPositions(), file=outfile, keepIds=True)
 
-# Write out the system information.
-with open('system.xml', 'w') as output:
+# Write out the system with force information.
+with open('system_force.xml', 'w') as output:
     output.write(XmlSerializer.serialize(system))
     
 # equilibrate
