@@ -31,4 +31,4 @@ python equil_md.py -p G12C_fixed.pdb -l gdp.sdf -o G12C_GDP -s 100000000  -z 0.0
 python prod_md.py -o G12C_GDP -s 500000000  -z 0.002 -i 100000 -t 310
 
 # Extend simulation from last checkpoint
-#python cont_md.py -o G12C_GDP -s 600000000  -z 0.002 -i 100000 -t 310              
+#python cont_md.py -o G12C_GDP -s 1000000000  -z 0.002 -i 100000 -t 310              
