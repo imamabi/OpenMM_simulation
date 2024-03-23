@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# V.Gazula 1/8/2019
- 
 #SBATCH -t 72:00:00                                   #Time for the job to run
 #SBATCH --job-name=G12C_GDP.                          #Name of the job
 #SBATCH -N 1                                          #Number of nodes required
@@ -24,22 +22,13 @@ module load ccs/cuda/10.0.130
 #module load ccs/cuda/11.6.0_510.39.01
 
 source activate /project/qsh226_uksr/iaim223/openmm_env
-#source activate /project/qsh226_uksr/iaim223/Anaconda3/envs/openmm/
-
-#source activate /project/qsh226_uksr/iaim223/openmm
-#source  activate /project/qsh226_uksr/iaim223/diffdock
-#conda activate /project/qsh226_uksr/nri-md
-
-#export CUDA_VISIBLE_DEVICES=1
-#export HF_DATASETS_CACHE="/project/qsh226_uksr/huggingface"
-#export TRANSFORMERS_CACHE=/project/qsh226_uksr/huggingface
 
 
 #Execute the equilibration script
-#python equil_md.py -p G12C_fixed.pdb -l gdp.sdf -o G12C_GDP -s 100000000  -z 0.002 -i 100000 -t 310 --solvate
+python equil_md.py -p G12C_fixed.pdb -l gdp.sdf -o G12C_GDP -s 100000000  -z 0.002 -i 100000 -t 310 --solvate
 
 #Execute the production script
-#python prod_md.py -o G12C_GDP -s 250000000  -z 0.002 -i 100000 -t 310
+python prod_md.py -o G12C_GDP -s 500000000  -z 0.002 -i 100000 -t 310
 
 # Extend simulation from last checkpoint
-python cont_md.py -o G12C_GDP -s 250000000  -z 0.002 -i 100000 -t 310
+#python cont_md.py -o G12C_GDP -s 600000000  -z 0.002 -i 100000 -t 310              
